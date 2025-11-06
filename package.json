@@ -1,0 +1,12 @@
+{
+  "name": "ai-tech-blog-generator",
+  "version": "1.0.0",
+  "description": "An AI-powered tool to generate trending topic ideas and complete articles for technical blog platforms like Zenn, optimized for SEO and reader engagement.",
+  "private": true,
+  "scripts": {
+    "start": "serve -l 3000"
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  }
+}
