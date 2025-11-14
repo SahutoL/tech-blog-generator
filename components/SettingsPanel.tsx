@@ -1,23 +1,30 @@
 
 import React, { useState } from 'react';
 import type { Settings } from '../types';
+import { ExternalLinkIcon } from './icons/ExternalLinkIcon';
 
 interface SettingsPanelProps {
   settings: Settings;
-  onSave: (settings: Settings) => void;
+  apiKey: string;
+  onSave: (settings: Settings, apiKey: string) => void;
   onClose: () => void;
 }
 
-export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSave, onClose }) => {
+export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, apiKey, onSave, onClose }) => {
   const [currentSettings, setCurrentSettings] = useState<Settings>(settings);
+  const [currentApiKey, setCurrentApiKey] = useState<string>(apiKey);
 
   const handleSave = () => {
-    onSave(currentSettings);
+    onSave(currentSettings, currentApiKey);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setCurrentSettings(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentApiKey(e.target.value);
   };
 
   return (
@@ -28,6 +35,29 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSave, 
           <p className="text-sm text-slate-500 mt-1">AIに記事を生成させる際の挙動をカスタマイズします。</p>
         </div>
         <div className="p-6 space-y-6 overflow-y-auto">
+          <div>
+            <label htmlFor="apiKey" className="block text-sm font-bold text-slate-700 mb-2">
+              Gemini APIキー
+            </label>
+            <input
+              id="apiKey"
+              name="apiKey"
+              type="password"
+              value={currentApiKey}
+              onChange={handleApiKeyChange}
+              className="w-full p-3 bg-slate-50 border border-slate-300 rounded-md font-mono text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              placeholder="APIキーを入力してください"
+            />
+            <a 
+              href="https://aistudio.google.com/app/apikey" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-2 text-sm text-indigo-600 hover:underline flex items-center gap-1"
+            >
+              Google AI Studioでキーを取得
+              <ExternalLinkIcon className="w-4 h-4" />
+            </a>
+          </div>
           <div>
             <label htmlFor="persona" className="block text-sm font-bold text-slate-700 mb-2">
               AIのペルソナ・文体

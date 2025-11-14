@@ -1,11 +1,6 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { TopicIdea, Settings } from '../types';
-
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const topicSchema = {
   type: Type.OBJECT,
@@ -41,7 +36,9 @@ const topicSchema = {
 };
 
 
-export const generateTopicIdeas = async (history: TopicIdea[] = [], settings: Settings): Promise<TopicIdea[]> => {
+export const generateTopicIdeas = async (apiKey: string, history: TopicIdea[] = [], settings: Settings): Promise<TopicIdea[]> => {
+  const ai = new GoogleGenAI({ apiKey });
+  
   let historyPrompt = '';
   if (history.length > 0) {
     const historyThemes = history.map(h => `- ${h.theme}`).join('\n');
@@ -84,7 +81,9 @@ ${historyPrompt}
   }
 };
 
-export const generateArticle = async (topic: TopicIdea, settings: Settings): Promise<string> => {
+export const generateArticle = async (apiKey: string, topic: TopicIdea, settings: Settings): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey });
+
   const prompt = `
 ${settings.persona}
 以下のテーマに基づき、高品質な技術記事を執筆してください。

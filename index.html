@@ -1,21 +1,58 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Tech Blog Generator</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="AIが技術ブログ記事のテーマ提案から執筆までをサポート。ペルソナ、参考環境、Markdownフォーマットを自由に設定でき、あらゆるブログプラットフォームに対応可能です。" />
+    <meta name="keywords" content="AI, 技術ブログ, 記事生成, Markdown, Gemini, 開発者ツール, ブログジェネレーター" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-domain.com/" />
+    <meta property="og:title" content="AI技術ブログ記事ジェネレーター" />
+    <meta property="og:description" content="AIが技術ブログ記事のテーマ提案から執筆までをサポート。あらゆるブログプラットフォームに対応可能です。" />
+    <meta property="og:image" content="https://your-domain.com/images/og-image.svg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://your-domain.com/" />
+    <meta property="twitter:title" content="AI技術ブログ記事ジェネレーター" />
+    <meta property="twitter:description" content="AIが技術ブログ記事のテーマ提案から執筆までをサポート。あらゆるブログプラットフォームに対応可能です。" />
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.svg" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
-  }
-}
-</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+      }
+    }
+    </script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "AI技術ブログ記事ジェネレーター",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "description": "AIが技術ブログ記事のテーマ提案から執筆までをサポートします。AIのペルソナ、参考環境、Markdownフォーマットを自由に設定でき、あらゆるブログプラットフォームに対応可能です。",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      }
+    }
+    </script>
 </head>
   <body class="bg-slate-50 text-slate-800">
     <div id="root"></div>
