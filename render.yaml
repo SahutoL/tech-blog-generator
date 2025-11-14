@@ -1,27 +1,15 @@
 # This file is a Render Blueprint.
-# It configures a service to act as a static site host.
+# It configures a web service to run a Node.js server using `serve`.
 # For more details, see: https://render.com/docs/blueprint-spec
 
 services:
   - # This defines our service.
     type: web
     name: ai-tech-blog-generator
-    # 'env: static' is crucial. It tells Render to use its high-performance
-    # static file server instead of running a start command.
-    env: static
-    # The command to run during the build process. 'npm install' is
-    # sufficient as there is no compilation step for this project.
+    # Use the Node.js environment to run the start command.
+    env: node
+    # The command to run during the build process.
     buildCommand: 'npm install'
-    # The directory containing the static files to publish. In our case,
-    # it's the root directory.
-    staticPublishPath: '.'
-    # Custom header rules to serve TypeScript files with the correct MIME type.
-    # This is essential for browsers to correctly interpret and execute
-    # the .tsx/.ts files as modules via the importmap.
-    headers:
-      - path: "/**/*.tsx"
-        name: "Content-Type"
-        value: "text/javascript; charset=utf-8"
-      - path: "/**/*.ts"
-        name: "Content-Type"
-        value: "text/javascript; charset=utf-8"
+    # The command to start the server. `serve` will host the files
+    # and use serve.json to set correct MIME types.
+    startCommand: 'npm start'
