@@ -1,18 +1,13 @@
-# This file is a Render Blueprint.
-# It configures a static site with custom headers for `.tsx` files.
+# This file is a Render Blueprint for a Node.js web service.
+# It installs dependencies, runs a build script, and starts a server.
 # For more details, see: https://render.com/docs/blueprint-spec
 
-staticSites:
-  - name: ai-tech-blog-generator
-    # The command to run during the build process.
-    buildCommand: 'npm install'
-    # The directory containing the static files to publish.
-    publishDir: '.'
-    # Custom headers to ensure `.tsx` and `.ts` files are served with the correct MIME type.
-    headers:
-      - path: "**/*.tsx"
-        name: "Content-Type"
-        value: "text/javascript; charset=utf-8"
-      - path: "**/*.ts"
-        name: "Content-Type"
-        value: "text/javascript; charset=utf-8"
+services:
+  - type: web
+    name: ai-tech-blog-generator
+    env: node
+    plan: free
+    # Commands to run on every push.
+    buildCommand: 'npm install && npm run build'
+    # Command to start the web server.
+    startCommand: 'npm start'

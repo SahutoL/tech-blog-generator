@@ -17,7 +17,8 @@ AIが技術ブログ記事のテーマ提案から執筆までをサポートす
 
 - **フロントエンド**: React, TypeScript, Tailwind CSS
 - **AI**: Google Gemini API (@google/genai)
-- **開発サーバー**: serve
+- **ビルドツール**: esbuild
+- **開発/本番サーバー**: serve
 
 ## APIキーの設定
 
@@ -50,7 +51,7 @@ APIキーはブラウザの`localStorage`に保存され、外部に送信され
 
 ## デプロイ
 
-このアプリケーションは、Render, Vercel, Netlifyのような静的ホスティングサービスに簡単にデプロイできます。環境変数を設定する必要はありません。
+このアプリケーションは、Render, Vercel, NetlifyのようなNode.jsをサポートするホスティングサービスにデプロイできます。
 
 ### Renderでのデプロイ手順
 
@@ -62,20 +63,17 @@ APIキーはブラウザの`localStorage`に保存され、外部に送信され
 4.  Renderが自動的に `render.yaml` を読み込み、サービス名（例: `ai-tech-blog-generator`）を提案します。
 5.  **[Apply]** をクリックしてデプロイを開始します。
 
-`render.yaml` ファイルがビルドコマンドや公開ディレクトリ、さらに本番環境で`.tsx`ファイルを正しく読み込むためのサーバー設定を自動で行うため、手動での設定は不要です。
+`render.yaml` ファイルがビルドコマンド (`npm run build`) やサーバー起動コマンド (`npm start`) を自動で実行するため、手動での設定は不要です。
 
 ### Vercel / Netlify でのデプロイ
-
-VercelやNetlifyでは、`.tsx`ファイルを正しく配信するためにカスタムヘッダーの設定が必要になる場合があります。
 
 1.  **Gitリポジトリにプッシュします。**
 2.  **ホスティングサービスを選択します:**
     - Vercel, Netlify など、お好みのサービスにリポジトリを接続します。
 3.  **ビルド設定を構成します:**
-    - **Build Command**: `npm install`
+    - **Build Command**: `npm install && npm run build`
     - **Publish Directory / Output Directory**: `.` (ルートディレクトリ)
-4.  **カスタムヘッダーを設定します (必要な場合):**
-    - `vercel.json` や `netlify.toml` を作成し、`.tsx` と `.ts` ファイルの `Content-Type` ヘッダーを `text/javascript` に設定するルールを追加します。
-5.  **デプロイを実行します。**
+    - **Start Command (必要な場合)**: `npm start`
+4.  **デプロイを実行します。**
 
-デプロイ後、アプリケーションにアクセスしたユーザーは、各自のAPIキーを設定画面から入力して利用します。
+ビルドプロセスにより、`.tsx`ファイルは標準的な`.js`ファイルに変換されるため、カスタムヘッダーなどの特別な設定は不要です。デプロイ後、アプリケーションにアクセスしたユーザーは、各自のAPIキーを設定画面から入力して利用します。
