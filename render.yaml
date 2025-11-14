@@ -3,13 +3,12 @@
 # For more details, see: https://render.com/docs/blueprint-spec
 
 services:
-  - type: static
+  - type: static_site
     name: ai-tech-blog-generator # You can change the service name
-    env: static
     # The build command and publish directory are defined here.
     # This overrides any settings in the Render dashboard.
     buildCommand: 'npm install'
-    staticPublishPath: '.'
+    publishDir: '.'
     headers:
       # This rule tells Render's servers to serve .tsx files as JavaScript.
       # This is crucial because browsers will not execute module scripts
