@@ -1,20 +1,27 @@
-# This file configures the static site on Render as a "Blueprint".
-# Render will automatically detect and apply this configuration.
-# The static site is defined under the top-level "staticSites" key.
+# This file is a Render Blueprint.
+# It configures a service to act as a static site host.
 # For more details, see: https://render.com/docs/blueprint-spec
 
-staticSites:
-  - name: ai-tech-blog-generator
+services:
+  - # This defines our service.
+    type: web
+    name: ai-tech-blog-generator
+    # 'env: static' is crucial. It tells Render to use its high-performance
+    # static file server instead of running a start command.
+    env: static
+    # The command to run during the build process. 'npm install' is
+    # sufficient as there is no compilation step for this project.
     buildCommand: 'npm install'
-    publishDir: '.'
+    # The directory containing the static files to publish. In our case,
+    # it's the root directory.
+    staticPublishPath: '.'
+    # Custom header rules to serve TypeScript files with the correct MIME type.
+    # This is essential for browsers to correctly interpret and execute
+    # the .tsx/.ts files as modules via the importmap.
     headers:
-      # This rule tells Render's servers to serve .tsx files as JavaScript.
-      # This is crucial because browsers will not execute module scripts
-      # unless they are served with a correct MIME type.
       - path: "/**/*.tsx"
         name: "Content-Type"
         value: "text/javascript; charset=utf-8"
-      # This rule does the same for .ts files.
       - path: "/**/*.ts"
         name: "Content-Type"
         value: "text/javascript; charset=utf-8"
