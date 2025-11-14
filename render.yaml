@@ -1,12 +1,12 @@
 # This file configures the static site on Render as a "Blueprint".
 # Render will automatically detect and apply this configuration.
+# The static site is defined under the top-level "staticSites" key.
 # For more details, see: https://render.com/docs/blueprint-spec
 
-services:
-  - type: static
-    name: tech-blog-generator
+staticSites:
+  - name: ai-tech-blog-generator
     buildCommand: 'npm install'
-    staticPublishPath: '.'
+    publishDir: '.'
     headers:
       # This rule tells Render's servers to serve .tsx files as JavaScript.
       # This is crucial because browsers will not execute module scripts
