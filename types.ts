@@ -5,3 +5,9 @@ export interface TopicIdea {
   keywords: string[];
   differentiation: string;
 }
+
+export interface Settings {
+  persona: string;
+  environments: string;
+  formattingRules: string;
+}

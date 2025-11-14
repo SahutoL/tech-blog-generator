@@ -5,11 +5,48 @@ import { TopicCard } from './components/TopicCard';
 import { ArticleDisplay } from './components/ArticleDisplay';
 import { Spinner } from './components/Spinner';
 import { HistoryList } from './components/HistoryList';
+import { AffiliateBanner } from './components/AffiliateBanner';
+import { SettingsPanel } from './components/SettingsPanel';
 import { SparklesIcon } from './components/icons/SparklesIcon';
 import { generateTopicIdeas, generateArticle } from './services/geminiService';
-import type { TopicIdea } from './types';
+import type { TopicIdea, Settings } from './types';
 
 const HISTORY_STORAGE_KEY = 'techBlogGeneratorHistory';
+const SETTINGS_STORAGE_KEY = 'techBlogGeneratorSettings';
+
+const defaultSettings: Settings = {
+  persona: `あなたは、様々な開発環境（macOS, Windows, Linux, VPSサーバー）に精通した経験豊富なソフトウェアエンジニアです。`,
+  environments: `## 参考環境 (ローカル開発環境)
+- マシン: MacBook Pro (M1 Pro)
+- OS: macOS Sequoia 15.6
+- シェル: Zsh
+- パッケージマネージャー: Homebrew 4.3.5
+- Node.js: v20.12.2 (nvm経由)
+
+## 参考環境 (サーバー環境)
+- サービス: Generic Cloud VPS
+- OS: Ubuntu 22.04 LTS
+- Webサーバー: Nginx
+- コンテナ: Docker Engine 26.1.1`,
+  formattingRules: `1. **フォーマット**: 一般的なMarkdown記法に従ってください。
+2. **Front Matter**: 記事の先頭に、以下の仕様でYAML形式のFront Matterを必ず含めてください。
+   - \`title\`: [生成されたタイトル]
+   - \`emoji\`: 記事の内容に最も適した絵文字を1つ
+   - \`type\`: "tech"
+   - \`topics\`: 関連する技術キーワードを英語小文字で3〜5個
+   - \`published\`: false
+3. **記事構成**:
+   - **はじめに**: 問題の概要を説明します。
+   - **対象環境**: 問題が確認された環境を \`:::message\` のような情報ブロックで記述します。
+   - **原因**: 考えられる原因を簡潔に説明します。
+   - **解決策**: 具体的な手順をコードスニペットを交えて記述します。
+   - **おわりに**: 記事のまとめや参照リンクを記載します。
+4. **スタイル**:
+   - **トーン**: 事実を淡々と記述する備忘録スタイル。
+   - **文体**: 「だ・である調」で統一。
+   - **コードブロック**: \`\`\`言語名:ファイル名\`\`\` のように、可能な限りタイトルを付けてください。`,
+};
+
 
 const App: React.FC = () => {
   const [topicIdeas, setTopicIdeas] = useState<TopicIdea[]>([]);
@@ -19,6 +56,8 @@ const App: React.FC = () => {
   const [selectedTopicTheme, setSelectedTopicTheme] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<TopicIdea[]>([]);
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -26,15 +65,26 @@ const App: React.FC = () => {
       if (storedHistory) {
         setHistory(JSON.parse(storedHistory));
       }
+      const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (storedSettings) {
+        setSettings(JSON.parse(storedSettings));
+      } else {
+        setSettings(defaultSettings);
+      }
     } catch (e) {
-      console.error("Failed to parse history from localStorage", e);
-      setHistory([]);
+      console.error("Failed to parse from localStorage", e);
     }
   }, []);
 
   const updateHistory = (newHistory: TopicIdea[]) => {
     setHistory(newHistory);
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(newHistory));
+  };
+  
+  const handleSaveSettings = (newSettings: Settings) => {
+    setSettings(newSettings);
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettings));
+    setIsSettingsOpen(false);
   };
 
   const handleGenerateTopics = useCallback(async () => {
@@ -43,15 +93,19 @@ const App: React.FC = () => {
     setGeneratedArticle('');
     setError(null);
     try {
-      const ideas = await generateTopicIdeas(history);
+      const ideas = await generateTopicIdeas(history, settings);
       setTopicIdeas(ideas);
+      if (ideas && ideas.length > 0) {
+        const newHistory = [...ideas, ...history];
+        updateHistory(newHistory);
+      }
     } catch (err) {
       console.error(err);
       setError('技術テーマの生成に失敗しました。APIキーを確認するか、後でもう一度お試しください。');
     } finally {
       setIsLoadingTopics(false);
     }
-  }, [history]);
+  }, [history, settings]);
 
   const handleGenerateArticle = useCallback(async (topic: TopicIdea) => {
     setIsGeneratingArticle(true);
@@ -60,19 +114,15 @@ const App: React.FC = () => {
     setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     try {
-      const article = await generateArticle(topic);
+      const article = await generateArticle(topic, settings);
       setGeneratedArticle(article);
-      if (!history.some(h => h.theme === topic.theme)) {
-        const newHistory = [topic, ...history];
-        updateHistory(newHistory);
-      }
     } catch (err) {
       console.error(err);
       setError('記事の生成に失敗しました。後でもう一度お試しください。');
     } finally {
       setIsGeneratingArticle(false);
     }
-  }, [history]);
+  }, [settings]);
 
   const handleClearHistory = useCallback(() => {
     updateHistory([]);
@@ -80,7 +130,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      <Header />
+      <Header onOpenSettings={() => setIsSettingsOpen(true)} />
       <main className="container mx-auto p-4 md:p-8">
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 border border-slate-200">
           <h2 className="text-2xl font-bold text-slate-800 mb-2">
@@ -98,6 +148,8 @@ const App: React.FC = () => {
             <span>技術テーマを生成</span>
           </button>
         </div>
+
+        <AffiliateBanner className="mb-8" />
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
@@ -147,7 +199,17 @@ const App: React.FC = () => {
 
         <HistoryList history={history} onClear={handleClearHistory} />
 
+        {history.length > 0 && <AffiliateBanner className="mt-8" />}
+
       </main>
+      
+      {isSettingsOpen && (
+        <SettingsPanel
+          settings={settings}
+          onSave={handleSaveSettings}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 };
